@@ -1,10 +1,13 @@
 package main
 
 import (	
+	"fmt"
 	"os"
 //	"log"
 //	"net/http"
 
+    "github.com/rancher/norman/pkg/dump"
+    "github.com/rancher/norman/signal"
 	"github.com/tan208123/navigate/app"
 	"github.com/urfave/cli"
 )
@@ -41,6 +44,8 @@ func main() {
 }
 
 func run(config app.Config) error {
-	// fmt.Printf("config is %v \n", config)
+	dump.GoroutineDumpOn(syscall.SIGUSR1, syscall.SIGILL)
+	ctx := signal.SigTermCancelContext(context.Background())
+	fmt.Printf("main.go ctx is %v \n", ctx)
 	return app.Run(&config) 
 }
