@@ -34,11 +34,11 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) error {
-		/*
+		
 		go func() {
 			log.Println(http.ListenAndServe("localhost:6060", nil))
 		}()
-		*/
+		
 		return run(config)
 	}
 
