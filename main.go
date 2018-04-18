@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
-//	"log"
-//	"net/http"
+	"log"
+	"net/http"
     "syscall"
 
     "github.com/rancher/norman/pkg/dump"
