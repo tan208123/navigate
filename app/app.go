@@ -18,11 +18,22 @@ type Config struct {
 func Run(ctx context.Context, cfg *Config) error {
 	logrus.Infof("app run ... ")
 	logrus.Infof("config is %v ", cfg)
+	server := &http.Server{Addr: ":12345"}
 	http.HandleFunc("/hello", HelloServer)
-	err := http.ListenAndServe(":12345", nil)
-	if err != nil {
-		logrus.Infof("ListenAndServe: %v ", err)
-	}
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			logrus.Infof("ListenAndServe: %v ", err)
+		}
+	}()
+
+	go func() {
+		<-ctx.Done()
+		if err := server.Shutdown(ctx); err != nil {
+			panic(err)
+		}
+	}()
+
 	<-ctx.Done()
 	return ctx.Err()
 }
