@@ -11,6 +11,7 @@ import (
 	"github.com/rancher/norman/signal"
 	"github.com/tan208123/navigate/app"
 	"github.com/tan208123/navigate/k8s"
+        "github.com/ehazlett/simplelog"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
@@ -41,7 +42,6 @@ func main() {
 		cli.BoolFlag{
 			Name:        "debug",
 			Usage:       "Enable debug logs",
-			Value:       true,
 			Destination: &config.Debug,
 		},
 		cli.StringFlag{
@@ -85,8 +85,10 @@ func run(cfg app.Config) error {
 	logrus.Infof("main.go ctx is %v ", ctx)
 
 	embedded, ctx, kubeConfig, err := k8s.GetConfig(ctx, cfg.K8sMode, cfg.KubeConfig)
+        logrus.Infof("main.go kubeConfig is %v ", kubeConfig)
 	if err != nil {
-		return err
+                logrus.Errorf("main.go  ", err)
+		//return err
 	}
 	cfg.Embedded = embedded
 
