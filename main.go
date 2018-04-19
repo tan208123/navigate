@@ -7,6 +7,7 @@ import (
 	"os"
 	"syscall"
 
+	"github.com/docker/docker/pkg/reexec"
 	"github.com/ehazlett/simplelog"
 	"github.com/rancher/norman/pkg/dump"
 	"github.com/rancher/norman/signal"
@@ -21,6 +22,10 @@ var (
 )
 
 func main() {
+
+	if reexec.Init() {
+		return
+	}
 
 	var config app.Config
 
