@@ -97,5 +97,5 @@ func run(cfg app.Config) error {
 	}
 	cfg.Embedded = embedded
 
-	return app.Run(&cfg)
+	return app.Run(ctx, &cfg)
 }

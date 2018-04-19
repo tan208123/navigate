@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"io"
 	"net/http"
 
@@ -14,15 +15,16 @@ type Config struct {
 	Debug      bool
 }
 
-func Run(config *Config) error {
+func Run(ctx context.Context, cfg *Config) error {
 	logrus.Infof("app run ... ")
-	logrus.Infof("config is %v ", config)
+	logrus.Infof("config is %v ", cfg)
 	http.HandleFunc("/hello", HelloServer)
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		logrus.Infof("ListenAndServe: %v ", err)
 	}
-	return nil
+	<-ctx.Done()
+	return ctx.Err()
 }
 
 // hello world, the web server
