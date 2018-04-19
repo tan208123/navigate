@@ -7,12 +7,12 @@ import (
 	"os"
 	"syscall"
 
+	"github.com/ehazlett/simplelog"
 	"github.com/rancher/norman/pkg/dump"
 	"github.com/rancher/norman/signal"
+	"github.com/sirupsen/logrus"
 	"github.com/tan208123/navigate/app"
 	"github.com/tan208123/navigate/k8s"
-        "github.com/ehazlett/simplelog"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
@@ -45,9 +45,9 @@ func main() {
 			Destination: &config.Debug,
 		},
 		cli.StringFlag{
-			Name:        "log-format",
-			Usage:       "Log formatter used (json, text, simple)",
-			Value:       "simple",
+			Name:  "log-format",
+			Usage: "Log formatter used (json, text, simple)",
+			Value: "simple",
 		},
 	}
 
@@ -56,7 +56,7 @@ func main() {
 		go func() {
 			log.Println(http.ListenAndServe("localhost:6060", nil))
 		}()
-        initLogs(c, config)
+		initLogs(c, config)
 		return run(config)
 	}
 
@@ -85,9 +85,9 @@ func run(cfg app.Config) error {
 	logrus.Infof("main.go ctx is %v ", ctx)
 
 	embedded, ctx, kubeConfig, err := k8s.GetConfig(ctx, cfg.K8sMode, cfg.KubeConfig)
-        logrus.Infof("main.go kubeConfig is %v ", kubeConfig)
+	logrus.Infof("main.go kubeConfig is %v ", kubeConfig)
 	if err != nil {
-                logrus.Errorf("main.go  ", err)
+		logrus.Errorf("main.go  ", err)
 		//return err
 	}
 	cfg.Embedded = embedded

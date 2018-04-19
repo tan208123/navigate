@@ -11,7 +11,7 @@ type Config struct {
 	KubeConfig string
 	K8sMode    string
 	Embedded   bool
-        Debug      bool
+	Debug      bool
 }
 
 func Run(config *Config) error {
