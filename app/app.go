@@ -1,22 +1,25 @@
 package app
 
 import (
-	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Config struct {
 	KubeConfig string
+	K8sMode    string
+	Embedded   bool
 }
 
 func Run(config *Config) error {
-	fmt.Printf("app run ... \n")
-	fmt.Printf("config is %v \n", config)
+	logrus.Infof("app run ... ")
+	logrus.Infof("config is %v ", config)
 	http.HandleFunc("/hello", HelloServer)
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
-		fmt.Printf("ListenAndServe: %v \n", err)
+		logrus.Infof("ListenAndServe: %v ", err)
 	}
 	return nil
 }
