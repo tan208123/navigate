@@ -35,6 +35,7 @@ func Run(ctx context.Context, cfg *Config) error {
 	}()
 
 	<-ctx.Done()
+	logrus.Infof("context done ...")
 	return ctx.Err()
 }
 
