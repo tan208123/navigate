@@ -4,4 +4,4 @@ COPY main /usr/bin
 
 EXPOSE 12345
 
-ENTRYPOINT ["main"]
+ENTRYPOINT ["navigate"]
