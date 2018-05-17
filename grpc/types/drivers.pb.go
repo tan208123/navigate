@@ -7,6 +7,11 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
+import (
+	context "golang.org/x/net/context"
+	grpc "google.golang.org/grpc"
+)
+
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
@@ -276,6 +281,111 @@ func init() {
 	proto.RegisterType((*StringSlice)(nil), "types.StringSlice")
 	proto.RegisterType((*ClusterInfo)(nil), "types.ClusterInfo")
 	proto.RegisterMapType((map[string]string)(nil), "types.ClusterInfo.MetadataEntry")
+}
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// Client API for Driver service
+
+type DriverClient interface {
+	Create(ctx context.Context, in *DriverOptions, opts ...grpc.CallOption) (*ClusterInfo, error)
+	Remove(ctx context.Context, in *ClusterInfo, opts ...grpc.CallOption) (*Empty, error)
+}
+
+type driverClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewDriverClient(cc *grpc.ClientConn) DriverClient {
+	return &driverClient{cc}
+}
+
+func (c *driverClient) Create(ctx context.Context, in *DriverOptions, opts ...grpc.CallOption) (*ClusterInfo, error) {
+	out := new(ClusterInfo)
+	err := grpc.Invoke(ctx, "/types.Driver/Create", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *driverClient) Remove(ctx context.Context, in *ClusterInfo, opts ...grpc.CallOption) (*Empty, error) {
+	out := new(Empty)
+	err := grpc.Invoke(ctx, "/types.Driver/Remove", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Driver service
+
+type DriverServer interface {
+	Create(context.Context, *DriverOptions) (*ClusterInfo, error)
+	Remove(context.Context, *ClusterInfo) (*Empty, error)
+}
+
+func RegisterDriverServer(s *grpc.Server, srv DriverServer) {
+	s.RegisterService(&_Driver_serviceDesc, srv)
+}
+
+func _Driver_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DriverOptions)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServer).Create(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.Driver/Create",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServer).Create(ctx, req.(*DriverOptions))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Driver_Remove_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClusterInfo)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DriverServer).Remove(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/types.Driver/Remove",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DriverServer).Remove(ctx, req.(*ClusterInfo))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Driver_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "types.Driver",
+	HandlerType: (*DriverServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Create",
+			Handler:    _Driver_Create_Handler,
+		},
+		{
+			MethodName: "Remove",
+			Handler:    _Driver_Remove_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "drivers.proto",
 }
 
 func init() { proto.RegisterFile("drivers.proto", fileDescriptor_drivers_ac7416dc6971797b) }
