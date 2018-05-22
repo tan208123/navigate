@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	listenAddr = "127.0.0.1"
+	listenAddr = "127.0.0.1:"
 )
 
 type GrpcServer struct {
