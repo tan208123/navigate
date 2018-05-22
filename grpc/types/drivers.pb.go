@@ -24,9 +24,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Empty struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	//	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	//	XXX_unrecognized     []byte   `json:"-"`
+	//	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Empty) Reset()         { *m = Empty{} }
@@ -35,6 +35,8 @@ func (*Empty) ProtoMessage()    {}
 func (*Empty) Descriptor() ([]byte, []int) {
 	return fileDescriptor_drivers_ac7416dc6971797b, []int{0}
 }
+
+/*
 func (m *Empty) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Empty.Unmarshal(m, b)
 }
@@ -52,15 +54,16 @@ func (m *Empty) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_Empty proto.InternalMessageInfo
+*/
 
 type DriverOptions struct {
-	BoolOptions          map[string]bool         `protobuf:"bytes,1,rep,name=bool_options,json=boolOptions" json:"bool_options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	StringOptions        map[string]string       `protobuf:"bytes,2,rep,name=string_options,json=stringOptions" json:"string_options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	IntOptions           map[string]int64        `protobuf:"bytes,3,rep,name=int_options,json=intOptions" json:"int_options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
-	StringSliceOptions   map[string]*StringSlice `protobuf:"bytes,4,rep,name=string_slice_options,json=stringSliceOptions" json:"string_slice_options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
+	BoolOptions        map[string]bool         `protobuf:"bytes,1,rep,name=bool_options,json=boolOptions" json:"bool_options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	StringOptions      map[string]string       `protobuf:"bytes,2,rep,name=string_options,json=stringOptions" json:"string_options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	IntOptions         map[string]int64        `protobuf:"bytes,3,rep,name=int_options,json=intOptions" json:"int_options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"varint,2,opt,name=value"`
+	StringSliceOptions map[string]*StringSlice `protobuf:"bytes,4,rep,name=string_slice_options,json=stringSliceOptions" json:"string_slice_options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	//	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	//	XXX_unrecognized     []byte                  `json:"-"`
+	//	XXX_sizecache        int32                   `json:"-"`
 }
 
 func (m *DriverOptions) Reset()         { *m = DriverOptions{} }
@@ -69,6 +72,8 @@ func (*DriverOptions) ProtoMessage()    {}
 func (*DriverOptions) Descriptor() ([]byte, []int) {
 	return fileDescriptor_drivers_ac7416dc6971797b, []int{1}
 }
+
+/*
 func (m *DriverOptions) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DriverOptions.Unmarshal(m, b)
 }
@@ -86,6 +91,7 @@ func (m *DriverOptions) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_DriverOptions proto.InternalMessageInfo
+*/
 
 func (m *DriverOptions) GetBoolOptions() map[string]bool {
 	if m != nil {
@@ -116,10 +122,10 @@ func (m *DriverOptions) GetStringSliceOptions() map[string]*StringSlice {
 }
 
 type StringSlice struct {
-	Value                []string `protobuf:"bytes,1,rep,name=value" json:"value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Value []string `protobuf:"bytes,1,rep,name=value" json:"value,omitempty"`
+	//	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	//	XXX_unrecognized     []byte   `json:"-"`
+	//	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *StringSlice) Reset()         { *m = StringSlice{} }
@@ -128,6 +134,8 @@ func (*StringSlice) ProtoMessage()    {}
 func (*StringSlice) Descriptor() ([]byte, []int) {
 	return fileDescriptor_drivers_ac7416dc6971797b, []int{2}
 }
+
+/*
 func (m *StringSlice) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StringSlice.Unmarshal(m, b)
 }
@@ -145,6 +153,7 @@ func (m *StringSlice) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_StringSlice proto.InternalMessageInfo
+*/
 
 func (m *StringSlice) GetValue() []string {
 	if m != nil {
@@ -154,20 +163,20 @@ func (m *StringSlice) GetValue() []string {
 }
 
 type ClusterInfo struct {
-	Version              string            `protobuf:"bytes,1,opt,name=version" json:"version,omitempty"`
-	ServiceAccountToken  string            `protobuf:"bytes,2,opt,name=service_account_token,json=serviceAccountToken" json:"service_account_token,omitempty"`
-	Endpoint             string            `protobuf:"bytes,3,opt,name=endpoint" json:"endpoint,omitempty"`
-	Username             string            `protobuf:"bytes,4,opt,name=username" json:"username,omitempty"`
-	Password             string            `protobuf:"bytes,5,opt,name=password" json:"password,omitempty"`
-	RootCaCertificate    string            `protobuf:"bytes,6,opt,name=root_ca_certificate,json=rootCaCertificate" json:"root_ca_certificate,omitempty"`
-	ClientCertificate    string            `protobuf:"bytes,7,opt,name=client_certificate,json=clientCertificate" json:"client_certificate,omitempty"`
-	ClientKey            string            `protobuf:"bytes,8,opt,name=client_key,json=clientKey" json:"client_key,omitempty"`
-	NodeCount            int64             `protobuf:"varint,9,opt,name=node_count,json=nodeCount" json:"node_count,omitempty"`
-	Metadata             map[string]string `protobuf:"bytes,10,rep,name=metadata" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	Status               string            `protobuf:"bytes,11,opt,name=status" json:"status,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+	Version             string            `protobuf:"bytes,1,opt,name=version" json:"version,omitempty"`
+	ServiceAccountToken string            `protobuf:"bytes,2,opt,name=service_account_token,json=serviceAccountToken" json:"service_account_token,omitempty"`
+	Endpoint            string            `protobuf:"bytes,3,opt,name=endpoint" json:"endpoint,omitempty"`
+	Username            string            `protobuf:"bytes,4,opt,name=username" json:"username,omitempty"`
+	Password            string            `protobuf:"bytes,5,opt,name=password" json:"password,omitempty"`
+	RootCaCertificate   string            `protobuf:"bytes,6,opt,name=root_ca_certificate,json=rootCaCertificate" json:"root_ca_certificate,omitempty"`
+	ClientCertificate   string            `protobuf:"bytes,7,opt,name=client_certificate,json=clientCertificate" json:"client_certificate,omitempty"`
+	ClientKey           string            `protobuf:"bytes,8,opt,name=client_key,json=clientKey" json:"client_key,omitempty"`
+	NodeCount           int64             `protobuf:"varint,9,opt,name=node_count,json=nodeCount" json:"node_count,omitempty"`
+	Metadata            map[string]string `protobuf:"bytes,10,rep,name=metadata" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Status              string            `protobuf:"bytes,11,opt,name=status" json:"status,omitempty"`
+	//	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	//	XXX_unrecognized     []byte            `json:"-"`
+	//	XXX_sizecache        int32             `json:"-"`
 }
 
 func (m *ClusterInfo) Reset()         { *m = ClusterInfo{} }
@@ -176,6 +185,8 @@ func (*ClusterInfo) ProtoMessage()    {}
 func (*ClusterInfo) Descriptor() ([]byte, []int) {
 	return fileDescriptor_drivers_ac7416dc6971797b, []int{3}
 }
+
+/*
 func (m *ClusterInfo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ClusterInfo.Unmarshal(m, b)
 }
@@ -193,6 +204,7 @@ func (m *ClusterInfo) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_ClusterInfo proto.InternalMessageInfo
+*/
 
 func (m *ClusterInfo) GetVersion() string {
 	if m != nil {
@@ -274,13 +286,13 @@ func (m *ClusterInfo) GetStatus() string {
 func init() {
 	proto.RegisterType((*Empty)(nil), "types.Empty")
 	proto.RegisterType((*DriverOptions)(nil), "types.DriverOptions")
-	proto.RegisterMapType((map[string]bool)(nil), "types.DriverOptions.BoolOptionsEntry")
-	proto.RegisterMapType((map[string]int64)(nil), "types.DriverOptions.IntOptionsEntry")
-	proto.RegisterMapType((map[string]string)(nil), "types.DriverOptions.StringOptionsEntry")
-	proto.RegisterMapType((map[string]*StringSlice)(nil), "types.DriverOptions.StringSliceOptionsEntry")
+	//	proto.RegisterMapType((map[string]bool)(nil), "types.DriverOptions.BoolOptionsEntry")
+	//	proto.RegisterMapType((map[string]int64)(nil), "types.DriverOptions.IntOptionsEntry")
+	//	proto.RegisterMapType((map[string]string)(nil), "types.DriverOptions.StringOptionsEntry")
+	//	proto.RegisterMapType((map[string]*StringSlice)(nil), "types.DriverOptions.StringSliceOptionsEntry")
 	proto.RegisterType((*StringSlice)(nil), "types.StringSlice")
 	proto.RegisterType((*ClusterInfo)(nil), "types.ClusterInfo")
-	proto.RegisterMapType((map[string]string)(nil), "types.ClusterInfo.MetadataEntry")
+	//	proto.RegisterMapType((map[string]string)(nil), "types.ClusterInfo.MetadataEntry")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
