@@ -3,12 +3,15 @@ package rke
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/rancher/norman/types/slice"
 	"github.com/rancher/rke/cmd"
 	"github.com/rancher/rke/hosts"
 	"github.com/rancher/rke/k8s"
@@ -16,6 +19,8 @@ import (
 	"github.com/tan208123/navigate/grpc/drivers"
 	"github.com/tan208123/navigate/grpc/drivers/rke/rkecerts"
 	"github.com/tan208123/navigate/grpc/types"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 const (
@@ -106,6 +111,151 @@ func (d *Driver) Create(ctx context.Context, opts *types.DriverOptions) (*types.
 			"Certs":      certsStr,
 		},
 	}, stateDir), nil
+}
+
+// Update updates the rke cluster
+func (d *Driver) Update(ctx context.Context, clusterInfo *types.ClusterInfo, opts *types.DriverOptions) (*types.ClusterInfo, error) {
+	yaml, err := getYAML(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	rkeConfig, err := drivers.ConvertToRkeConfig(yaml)
+	if err != nil {
+		return nil, err
+	}
+
+	stateDir, err := d.restore(clusterInfo)
+	if err != nil {
+		return nil, err
+	}
+	defer d.cleanup(stateDir)
+
+	certStr := ""
+	APIURL, caCrt, clientCert, clientKey, certs, err := cmd.ClusterUp(ctx, &rkeConfig, d.DockerDialer, d.LocalDialer,
+		d.wrapTransport(&rkeConfig), false, stateDir, false, false)
+	if err == nil {
+		certStr, err = rkecerts.ToString(certs)
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	if clusterInfo.Metadata == nil {
+		clusterInfo.Metadata = map[string]string{}
+	}
+
+	clusterInfo.Metadata["Endpoint"] = APIURL
+	clusterInfo.Metadata["RootCA"] = base64.StdEncoding.EncodeToString([]byte(caCrt))
+	clusterInfo.Metadata["ClientCert"] = base64.StdEncoding.EncodeToString([]byte(clientCert))
+	clusterInfo.Metadata["ClientKey"] = base64.StdEncoding.EncodeToString([]byte(clientKey))
+	clusterInfo.Metadata["Config"] = yaml
+	clusterInfo.Metadata["Certs"] = certStr
+
+	return d.save(clusterInfo, stateDir), nil
+}
+
+func (d *Driver) getClientset(info *types.ClusterInfo) (*kubernetes.Clientset, error) {
+	yaml := info.Metadata["Config"]
+
+	rkeConfig, err := drivers.ConvertToRkeConfig(yaml)
+	if err != nil {
+		return nil, err
+	}
+
+	info.Endpoint = info.Metadata["Endpoint"]
+	info.ClientCertificate = info.Metadata["ClientCert"]
+	info.ClientKey = info.Metadata["ClientKey"]
+	info.RootCaCertificate = info.Metadata["RootCA"]
+
+	certBytes, err := base64.StdEncoding.DecodeString(info.ClientCertificate)
+	if err != nil {
+		return nil, err
+	}
+	keyBytes, err := base64.StdEncoding.DecodeString(info.ClientKey)
+	if err != nil {
+		return nil, err
+	}
+	rootBytes, err := base64.StdEncoding.DecodeString(info.RootCaCertificate)
+	if err != nil {
+		return nil, err
+	}
+
+	host := info.Endpoint
+	if !strings.HasPrefix(host, "https://") {
+		host = fmt.Sprintf("https://%s", host)
+	}
+	config := &rest.Config{
+		Host: host,
+		TLSClientConfig: rest.TLSClientConfig{
+			CAData:   rootBytes,
+			CertData: certBytes,
+			KeyData:  keyBytes,
+		},
+		WrapTransport: d.WrapTransportFactory(&rkeConfig),
+	}
+
+	return kubernetes.NewForConfig(config)
+}
+
+// PostCheck does post action
+func (d *Driver) PostCheck(ctx context.Context, info *types.ClusterInfo) (*types.ClusterInfo, error) {
+	clientset, err := d.getClientset(info)
+	if err != nil {
+		return nil, err
+	}
+
+	var lastErr error
+	for i := 0; i < 3; i++ {
+		serverVersion, err := clientset.DiscoveryClient.ServerVersion()
+		if err != nil {
+			lastErr = fmt.Errorf("failed to get Kubernetes server version: %v", err)
+			time.Sleep(2 * time.Second)
+			continue
+		}
+
+		token, err := drivers.GenerateServiceAccountToken(clientset)
+		if err != nil {
+			lastErr = err
+			time.Sleep(2 * time.Second)
+			continue
+		}
+
+		info.Version = serverVersion.GitVersion
+		info.ServiceAccountToken = token
+
+		info.NodeCount, err = nodeCount(info)
+		if err != nil {
+			lastErr = err
+			time.Sleep(2 * time.Second)
+			continue
+		}
+
+		return info, err
+	}
+
+	return nil, lastErr
+}
+
+func nodeCount(info *types.ClusterInfo) (int64, error) {
+	yaml, ok := info.Metadata["Config"]
+	if !ok {
+		return 0, nil
+	}
+
+	rkeConfig, err := drivers.ConvertToRkeConfig(yaml)
+	if err != nil {
+		return 0, err
+	}
+
+	count := int64(0)
+	for _, node := range rkeConfig.Nodes {
+		if slice.ContainsString(node.Role, "worker") {
+			count++
+		}
+	}
+
+	return count, nil
 }
 
 // Remove removes the cluster

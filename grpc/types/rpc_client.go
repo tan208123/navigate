@@ -34,6 +34,20 @@ func (rpc *grpcClient) Create(ctx context.Context, opts *DriverOptions) (*Cluste
 	return o, handlErr(err)
 }
 
+// Update call grpc update
+func (rpc *grpcClient) Update(ctx context.Context, clusterInfo *ClusterInfo, opts *DriverOptions) (*ClusterInfo, error) {
+	o, err := rpc.client.Update(ctx, &UpdateRequest{
+		ClusterInfo:   clusterInfo,
+		DriverOptions: opts,
+	})
+	return o, handlErr(err)
+}
+
+func (rpc *grpcClient) PostCheck(ctx context.Context, clusterInfo *ClusterInfo) (*ClusterInfo, error) {
+	o, err := rpc.client.PostCheck(ctx, clusterInfo)
+	return o, handlErr(err)
+}
+
 // Remove call grpc remove
 func (rpc *grpcClient) Remove(ctx context.Context, clusterInfo *ClusterInfo) error {
 	_, err := rpc.client.Remove(ctx, clusterInfo)

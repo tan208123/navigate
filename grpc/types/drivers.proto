@@ -4,6 +4,8 @@ package types;
 
 service Driver {
     rpc Create (DriverOptions) returns (ClusterInfo) {}
+    rpc Update(UpdateRequest) returns (ClusterInfo) {}
+    rpc PostCheck(ClusterInfo) returns (ClusterInfo) {}
     rpc Remove (ClusterInfo) returns (Empty) {}
 }
 

@@ -31,6 +31,15 @@ func (s *GrpcServer) Create(ctx context.Context, opts *DriverOptions) (*ClusterI
 	return s.driver.Create(ctx, opts)
 }
 
+// Update implements grpc method
+func (s *GrpcServer) Update(ctx context.Context, update *UpdateRequest) (*ClusterInfo, error) {
+	return s.driver.Update(ctx, update.ClusterInfo, update.DriverOptions)
+}
+
+func (s *GrpcServer) PostCheck(ctx context.Context, clusterInfo *ClusterInfo) (*ClusterInfo, error) {
+	return s.driver.PostCheck(ctx, clusterInfo)
+}
+
 // Remove implements grpc method
 func (s *GrpcServer) Remove(ctx context.Context, clusterInfo *ClusterInfo) (*Empty, error) {
 	return &Empty{}, s.driver.Remove(ctx, clusterInfo)

@@ -34,16 +34,17 @@ func Start() error {
 
 type EngineService interface {
 	Create(ctx context.Context, name string, clusterSpec string) (string, string, string, error)
+	Update(ctx context.Context, name string, clusterSpec string) (string, string, string, error)
 	Remove(ctx context.Context, name string, clusterSpec string) error
 }
 
 type engineService struct {
-	serviceName string
+	store cluster.PersistentStore
 }
 
-func NewEngineService() EngineService {
+func NewEngineService(store cluster.PersistentStore) EngineService {
 	return &engineService{
-		serviceName: "test",
+		store: store,
 	}
 }
 
@@ -85,7 +86,7 @@ func (e *engineService) convertCluster(name string, spec string) (cluster.Cluste
 		clusterSpec: spec,
 		clusterName: name,
 	}
-	clusterPlugin, err := cluster.NewCluster(driverName, pluginAddr, name, configGetter)
+	clusterPlugin, err := cluster.NewCluster(driverName, pluginAddr, name, configGetter, e.store)
 	if err != nil {
 		return cluster.Cluster{}, err
 	}
@@ -100,6 +101,22 @@ func (e *engineService) Create(ctx context.Context, name string, clusterSpec str
 		return "", "", "", err
 	}
 	if err := cls.Create(ctx); err != nil {
+		return "", "", "", err
+	}
+	endpoint := cls.Endpoint
+	if !strings.HasPrefix(endpoint, "https://") {
+		endpoint = fmt.Sprintf("https://%s", cls.Endpoint)
+	}
+	return endpoint, cls.ServiceAccountToken, cls.RootCACert, nil
+}
+
+// Update creates the stub for cluster manager to call
+func (e *engineService) Update(ctx context.Context, name string, clusterSpec string) (string, string, string, error) {
+	cls, err := e.convertCluster(name, clusterSpec)
+	if err != nil {
+		return "", "", "", err
+	}
+	if err := cls.Update(ctx); err != nil {
 		return "", "", "", err
 	}
 	endpoint := cls.Endpoint

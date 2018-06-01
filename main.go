@@ -93,9 +93,9 @@ func run(cfg app.Config) error {
 	logrus.Infof("main.go kubeConfig is %v ", kubeConfig)
 	if err != nil {
 		logrus.Errorf("main.go  ", err)
-		//return err
+		return err
 	}
 	cfg.Embedded = embedded
 
-	return app.Run(ctx, &cfg)
+	return app.Run(ctx, *kubeConfig, &cfg)
 }
