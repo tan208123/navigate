@@ -47,6 +47,9 @@ func Run(ctx context.Context, kubeConfig rest.Config, cfg *Config) error {
 	}()
 
 	management, err := config.NewManagementContext(kubeConfig)
+	if err != nil {
+		return err
+	}
 
 	// Create custom resource definitions
 	if err := createCRDS(); err != nil {
