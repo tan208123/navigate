@@ -11,7 +11,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/tan208123/navigate/grpc/service"
 	types "github.com/tan208123/navigate/pkg/apis/clusterprovisioner/v1alpha1"
-	client "github.com/tan208123/navigate/pkg/client/clientset/versioned"
 	clusterclient "github.com/tan208123/navigate/pkg/client/clientset/versioned"
 	informers "github.com/tan208123/navigate/pkg/client/informers/externalversions"
 	listers "github.com/tan208123/navigate/pkg/client/listers/clusterprovisioner/v1alpha1"
@@ -33,14 +32,17 @@ type Controller struct {
 	Driver          service.EngineService
 }
 
-func Register(management *config.ManagementContext) {
-
-	clusterClient, err := client.NewForConfig(&management.RESTConfig)
-	if err != nil {
-		panic(err)
-	}
-	sampleInformerFactory := informers.NewSharedInformerFactory(clusterClient, time.Second*30)
-
+func Register(
+	clusterClient clusterclient.Interface,
+	sampleInformerFactory informers.SharedInformerFactory,
+	management *config.ManagementContext) {
+	/*
+		clusterClient, err := client.NewForConfig(&management.RESTConfig)
+		if err != nil {
+			panic(err)
+		}
+		sampleInformerFactory := informers.NewSharedInformerFactory(clusterClient, time.Second*30)
+	*/
 	clusterInformer := sampleInformerFactory.Clusterprovisioner().V1alpha1().Clusters()
 
 	controller := &Controller{
