@@ -71,6 +71,7 @@ func (c *Controller) sync(key string) {
 	cluster, err := c.clusterLister.Get(key)
 	if err != nil {
 		c.syncQueue.Requeue(key, err)
+		fmt.Errorf("sync error with geting key %s, error is %v", key, err)
 		return
 	}
 
@@ -81,6 +82,7 @@ func (c *Controller) sync(key string) {
 	}
 	if err != nil {
 		c.syncQueue.Requeue(key, err)
+		fmt.Errorf("sync error with removing or adding cluster key is %s, error is %v", key, err)
 		return
 	}
 }
