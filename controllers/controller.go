@@ -11,7 +11,7 @@ import (
 
 func Register(management *config.ManagementContext) error {
 
-	client, err := client.NewForConfig(management.RESTConfig)
+	client, err := client.NewForConfig(&management.RESTConfig)
 	if err != nil {
 		return err
 	}
