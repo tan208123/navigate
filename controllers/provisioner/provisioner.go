@@ -71,6 +71,7 @@ func (c *Controller) getName() string {
 
 func (c *Controller) sync(key string) {
 	cluster, err := c.clusterLister.Get(key)
+	logrus.Infof("clusterLister get ......")
 	if err != nil {
 		c.syncQueue.Requeue(key, err)
 		fmt.Errorf("sync error with geting key %s, error is %v", key, err)
@@ -101,6 +102,7 @@ func (c *Controller) handleClusterRemove(cluster *types.Cluster) error {
 
 func (c *Controller) handleClusterAdd(cluster *types.Cluster) error {
 	config, err := getConfigStr(cluster)
+	logrus.Infof("handleClusterAdd ......")
 	if err != nil {
 		return err
 	}

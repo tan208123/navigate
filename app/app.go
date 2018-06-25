@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os/exec"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/tan208123/navigate/controllers"
@@ -23,7 +24,7 @@ type Config struct {
 	Debug      bool
 }
 
-func Run(ctx context.Context, kubeConfig rest.Config, cfg *Config) error {
+func Run(ctx context.Context, kubeConfig *rest.Config, cfg *Config) error {
 	logrus.Infof("app run ... ")
 	logrus.Infof("config is %v ", cfg)
 	if err := service.Start(); err != nil {
@@ -59,6 +60,13 @@ func Run(ctx context.Context, kubeConfig rest.Config, cfg *Config) error {
 	// Register controllers
 	if err := controllers.Register(management); err != nil {
 		return err
+	}
+
+	// Run controllers
+	logrus.Info("Running controllers")
+
+	for {
+		time.Sleep(5 * time.Second)
 	}
 
 	<-ctx.Done()

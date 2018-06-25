@@ -30,7 +30,10 @@ nodes:
             1RL/X7Md8MqI5KfsLPUp9N3SWrqln46NfPi0dFZwqAE2/OMQQd5L9kkPrwMnDz1e
             CpPDrwMxRa75FbZ6i1WzpqTb3cvTRrndGC5jrmU5mWbkoOY4oRlR
             -----END RSA PRIVATE KEY-----
-    role: 
+    role:
     - controlplane
     - etcd
     - worker
+services:
+    kubelet:
+        extra_args: {"cgroup-driver":"systemd","fail-swap-on":"false"}

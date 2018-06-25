@@ -6,18 +6,18 @@ import (
 )
 
 type ManagementContext struct {
-	RESTConfig rest.Config
+	RESTConfig *rest.Config
 	K8sClient  kubernetes.Interface
 }
 
-func NewManagementContext(config rest.Config) (*ManagementContext, error) {
+func NewManagementContext(config *rest.Config) (*ManagementContext, error) {
 	var err error
 
 	context := &ManagementContext{
 		RESTConfig: config,
 	}
 
-	context.K8sClient, err = kubernetes.NewForConfig(&config)
+	context.K8sClient, err = kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, err
 	}

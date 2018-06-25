@@ -104,6 +104,7 @@ func (c *Cluster) create(ctx context.Context) error {
 
 	// create cluster
 	info, err := c.Driver.Create(ctx, &driverOpts)
+	logrus.Infof("info after grpc creating cluster is %v", info)
 	if err != nil {
 		if info != nil {
 			transformClusterInfo(c, info)

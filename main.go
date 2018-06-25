@@ -97,5 +97,5 @@ func run(cfg app.Config) error {
 	}
 	cfg.Embedded = embedded
 
-	return app.Run(ctx, *kubeConfig, &cfg)
+	return app.Run(ctx, kubeConfig, &cfg)
 }
