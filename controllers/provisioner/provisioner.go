@@ -9,12 +9,15 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"github.com/tan208123/navigate/grpc/drivers/rke"
 	"github.com/tan208123/navigate/grpc/service"
 	types "github.com/tan208123/navigate/pkg/apis/clusterprovisioner/v1alpha1"
 	clusterclient "github.com/tan208123/navigate/pkg/client/clientset/versioned"
 	informers "github.com/tan208123/navigate/pkg/client/informers/externalversions"
 	listers "github.com/tan208123/navigate/pkg/client/listers/clusterprovisioner/v1alpha1"
 	"github.com/tan208123/navigate/pkg/config"
+	"github.com/tan208123/navigate/pkg/dialer"
+	"github.com/tan208123/navigate/pkg/rkedialerfactory"
 	"github.com/tan208123/navigate/util"
 	"google.golang.org/grpc/metadata"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -62,6 +65,26 @@ func Register(
 	})
 	stop := make(chan struct{})
 	go controller.syncQueue.Run(time.Second, stop)
+
+	dialerFactory, err := dialer.NewFactory(management)
+	if err != nil {
+		panic(err)
+	}
+
+	local := &rkedialerfactory.RKEDialerFactory{
+		Factory: dialerFactory,
+	}
+	docker := &rkedialerfactory.RKEDialerFactory{
+		Factory: dialerFactory,
+		Docker:  true,
+	}
+
+	driver := service.Drivers["rke"]
+	rkeDriver := driver.(*rke.Driver)
+	rkeDriver.DockerDialer = docker.Build
+	rkeDriver.LocalDialer = local.Build
+	rkeDriver.WrapTransportFactory = docker.WrapTransport
+
 	logrus.Infof("Registered %s controller", controller.getName())
 }
 
